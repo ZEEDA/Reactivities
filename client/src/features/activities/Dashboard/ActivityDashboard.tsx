@@ -1,55 +1,62 @@
 import ActivitiesList from "@/components/ActivitiesList";
 import Grid from "@mui/material/Grid";
-import { Suspense, useState } from "react";
+import { Suspense } from "react";
 import ActivityDetails from "../details/ActivityDetails";
 import ActivityForm from "../form/ActivityForm";
 
 interface IActivityDashboardProps {
-  isOpenForm: boolean;
-  setIsOpenForm: (value: boolean) => void;
+  activities: Activity[];
+  selectActivity: (id: string) => void;
+  cancelSelectedActivity: () => void;
+  selectedActivity: Activity | undefined;
+  editMode: boolean;
+  openForm: (id?: string) => void;
+  closeForm: () => void;
 }
 const ActivityDashboard = ({
-  isOpenForm,
-  setIsOpenForm,
+  activities,
+  selectActivity,
+  cancelSelectedActivity,
+  selectedActivity,
+  editMode,
+  openForm,
+  closeForm,
 }: IActivityDashboardProps) => {
-  const [selectedActivity, setSelectedActivity] = useState<Activity | null>(
-    null,
-  );
-  const [formUpdated, setFormUpdated] = useState<boolean>(false);
-
-  const handleFormUpdated = (updated: boolean) => {
-    setFormUpdated(updated);
-    setTimeout(() => {
-      setFormUpdated(false);
-    }, 100);
-  };
+  // const [selectedActivity, setSelectedActivity] = useState<Activity | null>(
+  //   null,
+  // );
   const handleSetSelectedActivity = (activity: Activity | null) => {
     // go to the top of the page
     window.scrollTo(0, 0);
-    setSelectedActivity(activity);
+    selectActivity(activity?.id ?? "");
   };
 
   return (
     <Grid container spacing={2} sx={{ py: 2 }}>
       <Grid size={7}>
         <Suspense fallback={<div>Loading activities...</div>}>
-          {!formUpdated && <ActivitiesList setListUpdated={handleFormUpdated} setSelectedActivity={handleSetSelectedActivity} />}
+            <ActivitiesList
+              activities={activities}
+              setSelectedActivity={handleSetSelectedActivity}
+              closeForm={closeForm}
+              cancelSelectedActivity={cancelSelectedActivity}
+            />
         </Suspense>
       </Grid>
       <Grid size={5}>
         <Suspense fallback={<div>Loading activity details...</div>}>
-          {selectedActivity && !isOpenForm && (
+          {selectedActivity && !editMode && (
             <ActivityDetails
-              setSelectedActivity={handleSetSelectedActivity}
-              activity={selectedActivity}
-              setIsOpenForm={setIsOpenForm}
+              cancelSelectedActivity={cancelSelectedActivity}
+              selectedActivity={selectedActivity}
+              openForm={openForm}
+              closeForm={closeForm}
             />
           )}
-          {isOpenForm && (
+          {editMode && (
             <ActivityForm
-              setIsOpenForm={setIsOpenForm}
               activity={selectedActivity}
-              submitForm={handleFormUpdated}
+              closeForm={closeForm}
             />
           )}
         </Suspense>

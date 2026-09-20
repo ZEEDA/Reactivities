@@ -1,3 +1,4 @@
+import { useActivities } from "@/lib/hooks/useActivities";
 import {
   Box,
   Button,
@@ -11,13 +12,20 @@ import {
 interface IActivityCardProps {
   activity: Activity;
   setSelectedActivity: (activity: Activity | null) => void;
-  handleDeleteActivity: (activity: Activity) => void;
+  closeForm: () => void;
+  cancelSelectedActivity: () => void;
 }
 const ActivityCard = ({
   activity,
   setSelectedActivity,
-  handleDeleteActivity,
+  closeForm,
+  cancelSelectedActivity,
 }: IActivityCardProps) => {
+  const { deleteActivity } = useActivities();
+  const handleDeleteActivity = async (id: string) => {
+    await deleteActivity.mutateAsync(id);
+    cancelSelectedActivity();
+  };
   return (
     <Card sx={{ borderRadius: 4, px: 1 }}>
       <CardContent>
@@ -39,7 +47,7 @@ const ActivityCard = ({
             size="medium"
             variant="contained"
             sx={{ borderRadius: 10, backgroundColor: "#037ef9" }}
-            onClick={() => setSelectedActivity(activity)}
+            onClick={() => {setSelectedActivity(activity); closeForm();}}
           >
             View
           </Button>
@@ -47,7 +55,10 @@ const ActivityCard = ({
             size="medium"
             variant="contained"
             sx={{ borderRadius: 10, backgroundColor: "#f93737" }}
-            onClick={() => handleDeleteActivity(activity)}
+            onClick={() => {
+              handleDeleteActivity(activity.id);
+            }}
+            disabled={deleteActivity.isPending}
           >
             Delete
           </Button>

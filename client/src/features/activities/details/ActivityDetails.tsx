@@ -1,3 +1,4 @@
+import { useActivities } from "@/lib/hooks/useActivities";
 import {
   Button,
   Card,
@@ -8,12 +9,24 @@ import {
 } from "@mui/material";
 
 interface IActivityDetailsProps {
-  activity: Activity;
-  setSelectedActivity: (activity: Activity | null) => void;
-  setIsOpenForm: (value: boolean) => void;
+  selectedActivity: Activity;
+  cancelSelectedActivity: () => void;
+  openForm: (id?: string) => void;
+  closeForm: () => void;
 }
 
-const ActivityDetails = ({ activity, setSelectedActivity, setIsOpenForm }: IActivityDetailsProps) => {
+const ActivityDetails = ({
+  selectedActivity,
+  cancelSelectedActivity,
+  openForm,
+  closeForm,
+}: IActivityDetailsProps) => {
+  const { activities } = useActivities();
+
+  const activity = activities?.find((ac) => ac.id === selectedActivity.id);
+
+  if (!activity) return <Typography>Loading...</Typography>;
+  
   return (
     <Card sx={{ borderRadius: 4 }}>
       <CardMedia
@@ -28,8 +41,18 @@ const ActivityDetails = ({ activity, setSelectedActivity, setIsOpenForm }: IActi
         <Typography variant="body1">{activity.description}</Typography>
       </CardContent>
       <CardActions>
-        <Button color="primary" onClick={() => setIsOpenForm(true)}>Edit</Button>
-        <Button color="inherit" onClick={() => setSelectedActivity(null)}>Cancel</Button>
+        <Button color="primary" onClick={() => openForm(activity.id)}>
+          Edit
+        </Button>
+        <Button
+          color="inherit"
+          onClick={() => {
+            cancelSelectedActivity();
+            closeForm();
+          }}
+        >
+          Cancel
+        </Button>
       </CardActions>
     </Card>
   );

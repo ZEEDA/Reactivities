@@ -1,27 +1,36 @@
+import { useActivities } from "@/lib/hooks/useActivities";
 import { Button, Paper, TextField, Typography } from "@mui/material";
 import { Box } from "@mui/material";
 import type { SubmitEvent } from "react";
 
 interface IActivityFormProps {
   activity?: Activity | null;
-  setIsOpenForm: (value: boolean) => void;
-  submitForm: (updated: boolean) => void;
+  closeForm: () => void;
 }
-const ActivityForm = ({ setIsOpenForm, activity, submitForm }: IActivityFormProps) => {
+const ActivityForm = ({ closeForm, activity }: IActivityFormProps) => {
+  const { updateActivity, createActivity } = useActivities();
   const todayDate = new Date().toISOString().split("T")[0];
+  const normalizeDate = (date: string) => new Date(date).toISOString().split("T")[0];
 
-  const handleSubmit = (event: SubmitEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
-    
+
     const formData = new FormData(event.currentTarget);
 
     const data: { [key: string]: FormDataEntryValue } = {};
-    formData.forEach((value, key)=>{
+    
+    formData.forEach((value, key) => {
       data[key] = value;
     });
 
-    submitForm(true);
-    setIsOpenForm(false);
+    if (activity) {
+      data.id = activity.id;
+      await updateActivity.mutateAsync(data as unknown as Activity);
+    } else {
+      await createActivity.mutateAsync(data as unknown as Activity);
+    }
+
+    closeForm();
   };
 
   return (
@@ -42,20 +51,29 @@ const ActivityForm = ({ setIsOpenForm, activity, submitForm }: IActivityFormProp
           rows={3}
           defaultValue={activity?.description}
         />
-        <TextField name="category" label="Category" defaultValue={activity?.category} />
+        <TextField
+          name="category"
+          label="Category"
+          defaultValue={activity?.category}
+        />
         <TextField
           name="date"
           label="Date"
           type="date"
-          defaultValue={activity?.date ?? todayDate}
+          defaultValue={activity?.date? normalizeDate(activity.date) : todayDate}
         />
         <TextField name="city" label="City" defaultValue={activity?.city} />
         <TextField name="venue" label="Venue" defaultValue={activity?.venue} />
         <Box sx={{ display: "flex", justifyContent: "end", gap: 3 }}>
-          <Button color="inherit" onClick={() => setIsOpenForm(false)}>
+          <Button color="inherit" onClick={closeForm}>
             Cancel
           </Button>
-          <Button color="success" variant="contained" type="submit">
+          <Button
+            color="success"
+            variant="contained"
+            type="submit"
+            disabled={updateActivity.isPending || createActivity.isPending}
+          >
             Submit
           </Button>
         </Box>
