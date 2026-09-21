@@ -1,5 +1,6 @@
 import { useActivities } from "@/lib/hooks/useActivities";
 import {
+  Box,
   Button,
   Card,
   CardActions,
@@ -7,54 +8,44 @@ import {
   CardMedia,
   Typography,
 } from "@mui/material";
+import { Link, useNavigate, useParams } from "react-router";
 
-interface IActivityDetailsProps {
-  selectedActivity: Activity;
-  cancelSelectedActivity: () => void;
-  openForm: (id?: string) => void;
-  closeForm: () => void;
-}
+const ActivityDetails = () => {
+  const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
+  const { activity, isLoadingActivity } = useActivities(id);
 
-const ActivityDetails = ({
-  selectedActivity,
-  cancelSelectedActivity,
-  openForm,
-  closeForm,
-}: IActivityDetailsProps) => {
-  const { activities } = useActivities();
+  if (isLoadingActivity) return <Typography>Loading...</Typography>;
 
-  const activity = activities?.find((ac) => ac.id === selectedActivity.id);
-
-  if (!activity) return <Typography>Loading...</Typography>;
-  
   return (
-    <Card sx={{ borderRadius: 4 }}>
-      <CardMedia
-        component="img"
-        src={`/images/categoryImages/${activity.category}.jpg`}
-      />
-      <CardContent>
-        <Typography variant="h5">{activity.title}</Typography>
-        <Typography variant="subtitle1" sx={{ fontWeight: "light" }}>
-          {activity.date}
-        </Typography>
-        <Typography variant="body1">{activity.description}</Typography>
-      </CardContent>
-      <CardActions>
-        <Button color="primary" onClick={() => openForm(activity.id)}>
-          Edit
-        </Button>
-        <Button
-          color="inherit"
-          onClick={() => {
-            cancelSelectedActivity();
-            closeForm();
-          }}
-        >
-          Cancel
-        </Button>
-      </CardActions>
-    </Card>
+    <Box sx={{ py: 2 }}>
+      <Card sx={{ borderRadius: 4 }}>
+        <CardMedia
+          component="img"
+          src={`/images/categoryImages/${activity?.category}.jpg`}
+        />
+        <CardContent>
+          <Typography variant="h5">{activity?.title}</Typography>
+          <Typography variant="subtitle1" sx={{ fontWeight: "light" }}>
+            {activity?.date}
+          </Typography>
+          <Typography variant="body1">{activity?.description}</Typography>
+        </CardContent>
+        <CardActions>
+          <Button
+            color="primary"
+            variant="text"
+            component={Link}
+            to={`/manage/${activity?.id}`}
+          >
+            Edit
+          </Button>
+          <Button color="inherit" onClick={() => navigate("/activities")}>
+            Cancel
+          </Button>
+        </CardActions>
+      </Card>
+    </Box>
   );
 };
 export default ActivityDetails;

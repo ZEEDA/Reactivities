@@ -4,3 +4,16 @@
   padding: 0;
   box-sizing: border-box;
 }
+.nav-link {
+  position: relative;
+}
+.nav-link.active:before{
+  content: "";
+  display: block;
+  position: absolute;
+  bottom: -12px;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background-color: #fff;
+}

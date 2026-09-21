@@ -7,17 +7,14 @@ import Typography from "@mui/material/Typography";
 import Menu from "@mui/material/Menu";
 import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
-import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
 import { Group } from "@mui/icons-material";
+import { NavLink } from "react-router";
+import MenuItemLink from "@/app/shared/components/MenuItemLink";
 
 const pages = ["Activities", "About", "Contact"];
 
-interface INavBrProps {
-  setIsOpenForm: (value: boolean) => void;
-}
-
-function ResponsiveAppBar({ setIsOpenForm }: INavBrProps) {
+function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
     null,
   );
@@ -40,27 +37,27 @@ function ResponsiveAppBar({ setIsOpenForm }: INavBrProps) {
     >
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
-            <Group
-              sx={{ display: { xs: "none", md: "block" } }}
-              fontSize="large"
-            />
-            <Typography
-              variant="h4"
-              noWrap
-              component="a"
-              href="#app-bar-with-responsive-menu"
-              sx={{
-                mr: 2,
-                display: { xs: "none", md: "flex" },
-                fontWeight: 700,
-                color: "inherit",
-                textDecoration: "none",
-              }}
-            >
-              Reactivities
-            </Typography>
-          </Box>
+          <NavLink to="/" style={{ textDecoration: "none", color: "inherit" }}>
+            <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
+              <Group
+                sx={{ display: { xs: "none", md: "block" } }}
+                fontSize="large"
+              />
+              <Typography
+                variant="h4"
+                noWrap
+                sx={{
+                  mr: 2,
+                  display: { xs: "none", md: "flex" },
+                  fontWeight: 700,
+                  color: "inherit",
+                  textDecoration: "none",
+                }}
+              >
+                Reactivities
+              </Typography>
+            </Box>
+          </NavLink>
 
           <Box sx={{ display: { xs: "flex", md: "none" } }}>
             <IconButton
@@ -97,63 +94,47 @@ function ResponsiveAppBar({ setIsOpenForm }: INavBrProps) {
             </Menu>
           </Box>
           <Box sx={{ marginRight: "auto", marginLeft: "auto" }}>
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                gap: 2,
-              }}
+            <NavLink
+              to="/"
+              style={{ textDecoration: "none", color: "inherit" }}
             >
-              <Group
-                sx={{ display: { xs: "flex", md: "none" }, mr: 1 }}
-                fontSize="large"
-              />
-              <Typography
-                variant="h5"
-                noWrap
-                component="a"
-                href="#app-bar-with-responsive-menu"
+              <Box
                 sx={{
-                  mr: 2,
-                  display: { xs: "flex", md: "none" },
-                  fontWeight: 700,
-                  color: "inherit",
-                  textDecoration: "none",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 2,
                 }}
               >
-                Reactivities
-              </Typography>
-            </Box>
-            <Box
-              sx={{
-                display: { xs: "none", md: "flex" },
-              }}
-            >
-              {pages.map((page) => (
-                <Button
-                  key={page}
-                  onClick={handleCloseNavMenu}
+                <Group
+                  sx={{ display: { xs: "flex", md: "none" }, mr: 1 }}
+                  fontSize="large"
+                />
+                <Typography
+                  variant="h5"
+                  noWrap
                   sx={{
-                    color: "white",
-                    fontSize: "1rem",
-                    textTransform: "uppercase",
-                    fontWeight: "bold",
+                    mr: 2,
+                    display: { xs: "flex", md: "none" },
+                    fontWeight: 700,
+                    color: "inherit",
+                    textDecoration: "none",
                   }}
                 >
-                  {page}
-                </Button>
-              ))}
+                  Reactivities
+                </Typography>
+              </Box>
+            </NavLink>
+            <Box
+              sx={{
+                display: { xs: "none", md: "flex", gap: 4 },
+              }}
+            >
+              <MenuItemLink to="/activities">Activities</MenuItemLink>
+              <MenuItemLink to="/createActivity">Create Activity</MenuItemLink>
             </Box>
           </Box>
           <Box sx={{ flexGrow: 0 }}>
-            <Button
-              size="large"
-              variant="contained"
-              color="warning"
-              onClick={() => setIsOpenForm(true)}
-            >
-              Create Activity
-            </Button>
+            <Typography variant="h6">User Menu</Typography>
           </Box>
         </Toolbar>
       </Container>

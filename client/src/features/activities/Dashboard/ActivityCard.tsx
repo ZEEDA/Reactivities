@@ -8,23 +8,15 @@ import {
   Chip,
   Typography,
 } from "@mui/material";
+import { Link } from "react-router";
 
 interface IActivityCardProps {
   activity: Activity;
-  setSelectedActivity: (activity: Activity | null) => void;
-  closeForm: () => void;
-  cancelSelectedActivity: () => void;
 }
-const ActivityCard = ({
-  activity,
-  setSelectedActivity,
-  closeForm,
-  cancelSelectedActivity,
-}: IActivityCardProps) => {
+const ActivityCard = ({ activity }: IActivityCardProps) => {
   const { deleteActivity } = useActivities();
   const handleDeleteActivity = async (id: string) => {
     await deleteActivity.mutateAsync(id);
-    cancelSelectedActivity();
   };
   return (
     <Card sx={{ borderRadius: 4, px: 1 }}>
@@ -47,7 +39,8 @@ const ActivityCard = ({
             size="medium"
             variant="contained"
             sx={{ borderRadius: 10, backgroundColor: "#037ef9" }}
-            onClick={() => {setSelectedActivity(activity); closeForm();}}
+            component={Link}
+            to={`/activities/${activity.id}`}
           >
             View
           </Button>
