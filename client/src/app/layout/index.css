@@ -17,3 +17,8 @@
   height: 3px;
   background-color: #fff;
 }
+
+.react-calendar {
+  width: 100%!important;
+  border: none!important;
+}
