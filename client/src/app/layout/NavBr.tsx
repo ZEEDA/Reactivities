@@ -11,10 +11,14 @@ import MenuItem from "@mui/material/MenuItem";
 import { Group } from "@mui/icons-material";
 import { NavLink } from "react-router";
 import MenuItemLink from "@/app/shared/components/MenuItemLink";
+import { useStore } from "@/lib/hooks/useStore";
+import { Observer } from "mobx-react-lite";
+import { LinearProgress } from "@mui/material";
 
-const pages = ["Activities", "About", "Contact"];
+const pages = ["Activities", "Create Activity", "Counter"];
 
 function ResponsiveAppBar() {
+  const { uiStore } = useStore();
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
     null,
   );
@@ -31,6 +35,7 @@ function ResponsiveAppBar() {
     <AppBar
       position="static"
       sx={{
+        position: "relative",
         backgroundImage:
           "linear-gradient(135deg, #182a73, #218aae 69%, #20a7ac 89%)",
       }}
@@ -131,6 +136,7 @@ function ResponsiveAppBar() {
             >
               <MenuItemLink to="/activities">Activities</MenuItemLink>
               <MenuItemLink to="/createActivity">Create Activity</MenuItemLink>
+              <MenuItemLink to="/counter">Counter</MenuItemLink>
             </Box>
           </Box>
           <Box sx={{ flexGrow: 0 }}>
@@ -138,6 +144,17 @@ function ResponsiveAppBar() {
           </Box>
         </Toolbar>
       </Container>
+
+      <Observer>
+        {() =>
+          uiStore.isLoading ? (
+            <LinearProgress
+              color="secondary"
+              sx={{ position: "absolute", bottom: 0, left: 0, width: "100%" }}
+            />
+          ) : null
+        }
+      </Observer>
     </AppBar>
   );
 }
